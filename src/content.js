@@ -64,7 +64,7 @@ const users = [
     },
     {
         fullName: "Javier Loayza",
-        node: "Calacoto",
+        node: "Los olivos",
         year: 2020,
         skills: "Testing funcional",
         englishLevel: "Intermedio",
@@ -73,7 +73,7 @@ const users = [
     },
     {
         fullName: "Diego Mejia",
-        node: "Machu Picchu",
+        node: "Los olivos",
         year: 2019,
         skills: "Testing funcional",
         englishLevel: "Intermedio",

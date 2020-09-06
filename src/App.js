@@ -12,9 +12,17 @@ class App extends React.Component {
     constructor() {
         super();
         this.toggle = this.toggle.bind(this);
+        this.checkAllEvent = this.checkAllEvent.bind(this);
+        this.changeYear = this.changeYear.bind(this);
+        this.toggleHeadquarter = this.toggleHeadquarter.bind(this);
         this.state = {
             users: defaultUsers,
-            open: false
+            open: false,
+            areAllUsersChecked: false,
+            isExportButton: false,
+            currentYear: "Todos",
+            isHeadquarteropen: false,
+            currentHeadquarter: "Todos"
         }
     }
 
@@ -27,9 +35,22 @@ class App extends React.Component {
     }
 
     checkAllEvent(e) {
-        const newUsers = defaultUsers;
-        newUsers.map(u => u.isChecked = true);
-        this.setState({users: newUsers})
+        let newUsers = this.state.users;
+        if (this.state.areAllUsersChecked === false) {
+            newUsers.map(u => u.isChecked = true);
+            this.setState({users: newUsers})
+        } else {
+            newUsers.map(u => u.isChecked = false);
+            this.setState({users: newUsers})
+        }
+        this.setState({areAllUsersChecked: !this.state.areAllUsersChecked})
+
+    }
+
+    toggle() {
+        this.setState(prevState => {
+            return { open: !prevState.open };
+        });
     }
 
     filter(predicate) {
@@ -37,6 +58,48 @@ class App extends React.Component {
         newUsers.filter(predicate)
         newUsers.map(u => u.isChecked = true);
         this.setState({users: newUsers})
+    }
+
+    changeYear(e, value) {
+        let newUsers;
+        if (value === null) {
+            this.setState({
+                currentYear: "Todos"
+            })
+            newUsers = defaultUsers
+
+        } else {
+            this.setState({
+                currentYear: value
+            })
+            newUsers = this.state.users.filter(u => u.year === value)
+        }
+        this.setState({users: newUsers});
+
+    }
+
+    changeHeadquarter(e, value) {
+        let newUsers;
+        if (value === null) {
+            this.setState({
+                currentHeadquarter: "Todos"
+            })
+            newUsers = defaultUsers
+
+        } else {
+            this.setState({
+                currentHeadquarter: value
+            })
+            newUsers = this.state.users.filter(u => u.node === value)
+        }
+        this.setState({users: newUsers});
+
+    }
+
+    toggleHeadquarter() {
+        this.setState(prevState => {
+            return { isHeadquarteropen: !prevState.isHeadquarteropen };
+        });
     }
 
     render() {
@@ -80,15 +143,32 @@ class App extends React.Component {
                             </td>
                             <td><FormInput placeholder="Nombre de egresados" /></td>
                             <td><FormInput placeholder="Habilidades" /></td>
-                            <td><FormInput placeholder="Sede" /></td>
                             <td>
-                                <Dropdown open={this.state.open} toggle={this.toggle} group>
-                                    <Button>Dropdown</Button>
+                                <Dropdown open={this.state.isHeadquarteropen} toggle={this.toggleHeadquarter} group>
+                                    <Button>{this.state.currentHeadquarter}</Button>
                                     <DropdownToggle split />
                                     <DropdownMenu>
-                                        <DropdownItem>Action</DropdownItem>
-                                        <DropdownItem>Another action</DropdownItem>
-                                        <DropdownItem>Something else here</DropdownItem>
+                                        <DropdownItem onClick={ e => this.changeHeadquarter(e, null)}>Todos</DropdownItem>
+                                        <DropdownItem onClick={ e => this.changeHeadquarter(e,"Los pinos")}>Los pinos</DropdownItem>
+                                        <DropdownItem onClick={ e => this.changeHeadquarter(e,"Los olivos")}>Los olivos</DropdownItem>
+                                        <DropdownItem onClick={ e => this.changeHeadquarter(e,"La cancha")}>La cancha</DropdownItem>
+                                        <DropdownItem onClick={ e => this.changeHeadquarter(e,"Wakanda")}>Wakanda</DropdownItem>
+                                        <DropdownItem onClick={ e => this.changeHeadquarter(e,"Las frutillas")}>Las frutillas</DropdownItem>
+                                        <DropdownItem onClick={ e => this.changeHeadquarter(e,"Tomatitas")}>Tomatitas</DropdownItem>
+                                        <DropdownItem onClick={ e => this.changeHeadquarter(e,"Cerro sumk'orko")}>Cerro sumk'orko</DropdownItem>
+
+                                    </DropdownMenu>
+                                </Dropdown>
+                            </td>
+                            <td>
+                                <Dropdown open={this.state.open} toggle={this.toggle} group>
+                                    <Button>{this.state.currentYear}</Button>
+                                    <DropdownToggle split />
+                                    <DropdownMenu>
+                                        <DropdownItem onClick={ e => this.changeYear(e, null)}>Todos</DropdownItem>
+                                        <DropdownItem onClick={ e => this.changeYear(e,2018)}>2018</DropdownItem>
+                                        <DropdownItem onClick={ e => this.changeYear(e,2019)}>2019</DropdownItem>
+                                        <DropdownItem onClick={ e => this.changeYear(e,2020)}>2020</DropdownItem>
                                     </DropdownMenu>
                                 </Dropdown>
                             </td>
@@ -120,11 +200,11 @@ class App extends React.Component {
                             Exportar
                         </Button>
                         <Tooltip
-                            open={this.state.open}
+                            open={this.state.isExportButton}
                             target="#TooltipExample"
                             toggle={e =>
                                 (this.setState({
-                                    open: !this.state.open
+                                    isExportButton: !this.state.isExportButton
                                 }))}
                         >
                             Exportar archivo pdf 📁

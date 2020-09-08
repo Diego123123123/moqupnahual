@@ -3,7 +3,7 @@ const users = [
         fullName: "Daniel Perez Paredes",
         node: "Los pinos",
         year: 2020,
-        skills: "Testing funcional",
+        skills: "Introduccion a la programacion",
         englishLevel: "Basico",
         CVProfile: "linkedin/dperez",
         isChecked: false
@@ -39,7 +39,7 @@ const users = [
         fullName: "Ivy Sejas Rocabado",
         node: "Wakanda",
         year: 2020,
-        skills: "Testing funcional",
+        skills: "Testing automation",
         englishLevel: "Intermedio",
         CVProfile: "linkedin/iRocabado",
         isChecked: false
@@ -48,7 +48,7 @@ const users = [
         fullName: "Gustavo Saavedra",
         node: "tomatitas",
         year: 2019,
-        skills: "Testing funcional",
+        skills: "Testing automation",
         englishLevel: "Basico",
         CVProfile: "linkedin/gSaavedra",
         isChecked: false
@@ -66,7 +66,7 @@ const users = [
         fullName: "Javier Loayza",
         node: "Los olivos",
         year: 2020,
-        skills: "Testing funcional",
+        skills: "Testing automation",
         englishLevel: "Intermedio",
         CVProfile: "linkedin/jLoayza",
         isChecked: false
@@ -75,7 +75,7 @@ const users = [
         fullName: "Diego Mejia",
         node: "Los olivos",
         year: 2019,
-        skills: "Testing funcional",
+        skills: "Alfabetizacion digital",
         englishLevel: "Intermedio",
         CVProfile: "linkedin/dMejia",
         isChecked: false

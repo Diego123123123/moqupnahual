@@ -1,20 +1,38 @@
 import React from 'react';
-import {Row, Col, FormInput, Button, FormCheckbox, Tooltip, Dropdown,
+import {
+    Row,
+    Col,
+    FormInput,
+    Button,
+    FormCheckbox,
+    Tooltip,
+    Dropdown,
     DropdownToggle,
     DropdownMenu,
-    DropdownItem } from "shards-react";
-import { useState } from 'react';
+    DropdownItem,
+    Modal,
+    ModalBody,
+    ModalHeader,
+    Alert,
+    Badge,
+    ButtonGroup
+} from "shards-react";
 import defaultUsers from './content';
 import './App.css';
-import users from "./content";
 
 class App extends React.Component {
     constructor() {
         super();
         this.toggle = this.toggle.bind(this);
         this.checkAllEvent = this.checkAllEvent.bind(this);
+        this.filter = this.filter.bind(this);
         this.changeYear = this.changeYear.bind(this);
+        this.changeEnglish = this.changeEnglish.bind(this);
         this.toggleHeadquarter = this.toggleHeadquarter.bind(this);
+        this.toggleEnglishLevel = this.toggleEnglishLevel.bind(this);
+        this.userNameLastNameChange = this.userNameLastNameChange.bind(this);
+        this.toggleSkill = this.toggleSkill.bind(this);
+        this.toggleModal = this.toggleModal.bind(this);
         this.state = {
             users: defaultUsers,
             open: false,
@@ -22,7 +40,13 @@ class App extends React.Component {
             isExportButton: false,
             currentYear: "Todos",
             isHeadquarteropen: false,
-            currentHeadquarter: "Todos"
+            currentHeadquarter: "Todos",
+            isEnglishLevelOpened: false,
+            currentEnglishLevel: "Todos",
+            isSkillsOpen: false,
+            currentSkill: "Todos",
+            userNameLastName: "",
+            isModalOpened: false
         }
     }
 
@@ -32,6 +56,19 @@ class App extends React.Component {
         newState[index] = user;
         newState[index].isChecked = newUserCheckedState;
         this.setState({users: newState, open: false});
+    }
+
+    userNameLastNameChange(event) {
+        let newUsers = defaultUsers;
+        newUsers = newUsers.filter((this.state.currentEnglishLevel === "Todos") ? (u => u.englishLevel != null) : (u => u.englishLevel === this.state.currentEnglishLevel))
+        newUsers = newUsers.filter((this.state.currentSkill === "Todos") ? (u => u.skills != null) : (u => u.skills === this.state.currentSkill))
+        newUsers = newUsers.filter((this.state.currentYear === "Todos") ? (u => u.year != null) : (u => u.year === this.state.currentYear))
+        newUsers = newUsers.filter((this.state.currentHeadquarter === "Todos") ? (u => u.node != null) : (u => u.node === this.state.currentHeadquarter))
+        newUsers = newUsers.filter(u => u.fullName.includes(event.target.value))
+        this.setState({
+            users: newUsers,
+            userNameLastName: event.target.value
+        })
     }
 
     checkAllEvent(e) {
@@ -53,47 +90,66 @@ class App extends React.Component {
         });
     }
 
-    filter(predicate) {
-        const newUsers = defaultUsers;
-        newUsers.filter(predicate)
-        newUsers.map(u => u.isChecked = true);
+    filter() {
+        let newUsers = defaultUsers;
+        newUsers = newUsers.filter((this.state.currentEnglishLevel === "Todos") ? (u => u.englishLevel != null) : (u => u.englishLevel === this.state.currentEnglishLevel))
+        newUsers = newUsers.filter((this.state.currentSkill === "Todos") ? (u => u.skills != null) : (u => u.skills === this.state.currentSkill))
+        newUsers = newUsers.filter((this.state.currentYear === "Todos") ? (u => u.year != null) : (u => u.year === this.state.currentYear))
+        newUsers = newUsers.filter((this.state.currentHeadquarter === "Todos") ? (u => u.node != null) : (u => u.node === this.state.currentHeadquarter))
+        newUsers = newUsers.filter(u => u.fullName.includes(this.state.userNameLastName))
         this.setState({users: newUsers})
     }
 
     changeYear(e, value) {
-        let newUsers;
-        if (value === null) {
-            this.setState({
-                currentYear: "Todos"
-            })
-            newUsers = defaultUsers
+        let newUsers = defaultUsers;
+        newUsers = newUsers.filter((this.state.currentEnglishLevel === "Todos") ? (u => u.englishLevel != null) : (u => u.englishLevel === this.state.currentEnglishLevel))
+        newUsers = newUsers.filter((this.state.currentSkill === "Todos") ? (u => u.skills != null) : (u => u.skills === this.state.currentSkill))
+        newUsers = newUsers.filter((value === "Todos") ? (u => u.year != null) : (u => u.year === value))
+        newUsers = newUsers.filter((this.state.currentHeadquarter === "Todos") ? (u => u.node != null) : (u => u.node === this.state.currentHeadquarter))
+        newUsers = newUsers.filter(u => u.fullName.includes(this.state.userNameLastName))
+        this.setState({
+            users: newUsers,
+            currentYear: value
+        });
+    }
 
-        } else {
-            this.setState({
-                currentYear: value
-            })
-            newUsers = this.state.users.filter(u => u.year === value)
-        }
-        this.setState({users: newUsers});
-
+    changeEnglish(e, value) {
+        let newUsers = defaultUsers;
+        newUsers = newUsers.filter((value === "Todos") ? (u => u.englishLevel != null) : (u => u.englishLevel === value))
+        newUsers = newUsers.filter((this.state.currentSkill === "Todos") ? (u => u.skills != null) : (u => u.skills === this.state.currentSkill))
+        newUsers = newUsers.filter((this.state.currentYear === "Todos") ? (u => u.year != null) : (u => u.year === this.state.currentYear))
+        newUsers = newUsers.filter((this.state.currentHeadquarter === "Todos") ? (u => u.node != null) : (u => u.node === this.state.currentHeadquarter))
+        newUsers = newUsers.filter(u => u.fullName.includes(this.state.userNameLastName))
+        this.setState({
+            users: newUsers,
+            currentEnglishLevel: value
+        });
     }
 
     changeHeadquarter(e, value) {
-        let newUsers;
-        if (value === null) {
-            this.setState({
-                currentHeadquarter: "Todos"
-            })
-            newUsers = defaultUsers
+        let newUsers = defaultUsers;
+        newUsers = newUsers.filter((this.state.currentEnglishLevel === "Todos") ? (u => u.englishLevel != null) : (u => u.englishLevel === this.state.currentEnglishLevel))
+        newUsers = newUsers.filter((this.state.currentSkill === "Todos") ? (u => u.skills != null) : (u => u.skills === this.state.currentSkill))
+        newUsers = newUsers.filter((this.state.currentYear === "Todos") ? (u => u.year != null) : (u => u.year === this.state.currentYear))
+        newUsers = newUsers.filter((value === "Todos") ? (u => u.node != null) : (u => u.node === value))
+        newUsers = newUsers.filter(u => u.fullName.includes(this.state.userNameLastName))
+        this.setState({
+            users: newUsers,
+            currentHeadquarter: value
+        });
+    }
 
-        } else {
-            this.setState({
-                currentHeadquarter: value
-            })
-            newUsers = this.state.users.filter(u => u.node === value)
-        }
-        this.setState({users: newUsers});
-
+    changeSkill(e, value) {
+        let newUsers = defaultUsers;
+        newUsers = newUsers.filter((this.state.currentEnglishLevel === "Todos") ? (u => u.englishLevel != null) : (u => u.englishLevel === this.state.currentEnglishLevel))
+        newUsers = newUsers.filter((value === "Todos") ? (u => u.skills != null) : (u => u.skills === value))
+        newUsers = newUsers.filter((this.state.currentYear === "Todos") ? (u => u.year != null) : (u => u.year === this.state.currentYear))
+        newUsers = newUsers.filter((this.state.currentHeadquarter === "Todos") ? (u => u.node != null) : (u => u.node === this.state.currentHeadquarter))
+        newUsers = newUsers.filter(u => u.fullName.includes(this.state.userNameLastName))
+        this.setState({
+            users: newUsers,
+            currentSkill: value
+        });
     }
 
     toggleHeadquarter() {
@@ -102,9 +158,78 @@ class App extends React.Component {
         });
     }
 
+    toggleSkill() {
+        this.setState(prevState => {
+            return { isSkillsOpen: !prevState.isSkillsOpen };
+        });
+    }
+
+    toggleEnglishLevel() {
+        this.setState(prevState => {
+            return { isEnglishLevelOpened: !prevState.isEnglishLevelOpened };
+        });
+    }
+
+    toggleModal() {
+        this.setState({
+            isModalOpened: !this.state.isModalOpened
+        });
+    }
+
     render() {
         return (
             <div className="App">
+                <Modal open={this.state.isModalOpened} toggle={this.toggleModal}>
+                    <ModalHeader>Egresade</ModalHeader>
+                    <ModalBody>
+                        <Alert theme="light">
+                            <a className="alert-link" href="#">
+                                Nombre Completo &nbsp;
+                            </a>
+                            Ivy Sejas Rocabado
+                        </Alert>
+                        <Alert theme="light">
+                            <a className="alert-link" href="#">
+                                Nodo &nbsp;
+                            </a>
+                            Cochabamba
+                        </Alert>
+                        <Alert theme="light">
+                            <a className="alert-link" href="#">
+                                Sede &nbsp;
+                            </a>
+                            Cercado
+                        </Alert>
+                        <Alert theme="light">
+                            <a className="alert-link" href="#">
+                                Año de egreso &nbsp;
+                            </a>
+                            2020
+                        </Alert>
+                        <Alert theme="light">
+                            <a className="alert-link" href="#">
+                                Nivel de ingles &nbsp;
+                            </a>
+                            Intermedio
+                        </Alert>
+                        <Alert theme="light">
+                            <a className="alert-link" href="#">
+                                Modulos cursados &nbsp;
+                            </a>
+                            <Badge pill theme="success">
+                                Testing funcional
+                            </Badge>
+                            <Badge pill theme="success">
+                                Testing Automation
+                            </Badge>
+                        </Alert>
+
+                        <ButtonGroup className="mr-12" style={{display: "flex"}}>
+                            <Button>Exportar</Button>
+                            <Button theme="success" >Ver CV</Button>
+                        </ButtonGroup>
+                    </ModalBody>
+                </Modal>
                 <div className="navbar-container">
                     <Row>
                         <Col >
@@ -141,14 +266,26 @@ class App extends React.Component {
                                     </svg>
                                 </Button>
                             </td>
-                            <td><FormInput placeholder="Nombre de egresados" /></td>
-                            <td><FormInput placeholder="Habilidades" /></td>
+                            <td><FormInput placeholder="Nombre de egresados" value={this.state.userNameLastName} onChange={this.userNameLastNameChange}  /></td>
+                            <td>
+                                <Dropdown open={this.state.isSkillsOpen} toggle={this.toggleSkill} group>
+                                    <Button>{this.state.currentSkill}</Button>
+                                    <DropdownToggle split />
+                                    <DropdownMenu>
+                                        <DropdownItem onClick={ e => this.changeSkill(e, "Todos")}>Todos</DropdownItem>
+                                        <DropdownItem onClick={ e => this.changeSkill(e,"Testing funcional")}>Testing funcional</DropdownItem>
+                                        <DropdownItem onClick={ e => this.changeSkill(e,"Introduccion a la programacion")}>Introduccion a la programacion</DropdownItem>
+                                        <DropdownItem onClick={ e => this.changeSkill(e,"Alfabetizacion digital")}>Alfabetizacion digital</DropdownItem>
+                                        <DropdownItem onClick={ e => this.changeSkill(e,"Testing automation")}>Testing automation</DropdownItem>
+                                    </DropdownMenu>
+                                </Dropdown>
+                            </td>
                             <td>
                                 <Dropdown open={this.state.isHeadquarteropen} toggle={this.toggleHeadquarter} group>
                                     <Button>{this.state.currentHeadquarter}</Button>
                                     <DropdownToggle split />
                                     <DropdownMenu>
-                                        <DropdownItem onClick={ e => this.changeHeadquarter(e, null)}>Todos</DropdownItem>
+                                        <DropdownItem onClick={ e => this.changeHeadquarter(e, "Todos")}>Todos</DropdownItem>
                                         <DropdownItem onClick={ e => this.changeHeadquarter(e,"Los pinos")}>Los pinos</DropdownItem>
                                         <DropdownItem onClick={ e => this.changeHeadquarter(e,"Los olivos")}>Los olivos</DropdownItem>
                                         <DropdownItem onClick={ e => this.changeHeadquarter(e,"La cancha")}>La cancha</DropdownItem>
@@ -156,7 +293,6 @@ class App extends React.Component {
                                         <DropdownItem onClick={ e => this.changeHeadquarter(e,"Las frutillas")}>Las frutillas</DropdownItem>
                                         <DropdownItem onClick={ e => this.changeHeadquarter(e,"Tomatitas")}>Tomatitas</DropdownItem>
                                         <DropdownItem onClick={ e => this.changeHeadquarter(e,"Cerro sumk'orko")}>Cerro sumk'orko</DropdownItem>
-
                                     </DropdownMenu>
                                 </Dropdown>
                             </td>
@@ -165,14 +301,25 @@ class App extends React.Component {
                                     <Button>{this.state.currentYear}</Button>
                                     <DropdownToggle split />
                                     <DropdownMenu>
-                                        <DropdownItem onClick={ e => this.changeYear(e, null)}>Todos</DropdownItem>
+                                        <DropdownItem onClick={ e => this.changeYear(e, "Todos")}>Todos</DropdownItem>
                                         <DropdownItem onClick={ e => this.changeYear(e,2018)}>2018</DropdownItem>
                                         <DropdownItem onClick={ e => this.changeYear(e,2019)}>2019</DropdownItem>
                                         <DropdownItem onClick={ e => this.changeYear(e,2020)}>2020</DropdownItem>
                                     </DropdownMenu>
                                 </Dropdown>
                             </td>
-                            <td><FormInput placeholder="Nivel de ingles" /></td>
+                            <td>
+                                <Dropdown open={this.state.isEnglishLevelOpened} toggle={this.toggleEnglishLevel} group>
+                                    <Button>{this.state.currentEnglishLevel}</Button>
+                                    <DropdownToggle split />
+                                    <DropdownMenu>
+                                        <DropdownItem onClick={ e => this.changeEnglish(e, "Todos")}>Todos</DropdownItem>
+                                        <DropdownItem onClick={ e => this.changeEnglish(e,"Basico")}>Basico</DropdownItem>
+                                        <DropdownItem onClick={ e => this.changeEnglish(e,"Intermedio")}>Intermedio</DropdownItem>
+                                        <DropdownItem onClick={ e => this.changeEnglish(e,"Avanzado")}>Avanzado</DropdownItem>
+                                    </DropdownMenu>
+                                </Dropdown>
+                            </td>
                             <td></td>
                         </tr>
                         {this.state.users.map((user, index) =>
@@ -190,6 +337,18 @@ class App extends React.Component {
                                 <td>{user.year}</td>
                                 <td>{user.englishLevel}</td>
                                 <td>{user.CVProfile}</td>
+                                <td>
+                                    <Button outline pill onClick={this.toggleModal} >
+                                        <svg width="1em" height="1em" viewBox="0 0 16 16" className="bi bi-info-circle"
+                                             fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                                            <path fill-rule="evenodd"
+                                                  d="M8 15A7 7 0 1 0 8 1a7 7 0 0 0 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
+                                            <path
+                                                d="M8.93 6.588l-2.29.287-.082.38.45.083c.294.07.352.176.288.469l-.738 3.468c-.194.897.105 1.319.808 1.319.545 0 1.178-.252 1.465-.598l.088-.416c-.2.176-.492.246-.686.246-.275 0-.375-.193-.304-.533L8.93 6.588z"/>
+                                            <circle cx="8" cy="4.5" r="1"/>
+                                        </svg>
+                                    </Button>
+                                </td>
                             </tr>
                         )
                         }
@@ -228,7 +387,6 @@ class App extends React.Component {
                         </nav>
                     </div>
                 </div>
-
             </div>
         );
     }
